@@ -1,11 +1,827 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    kkaaa
-</body>
+<!doctype html>
+<html lang="en" class="tw-dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>🚗Find Your Parking Lot</title>
+        <meta name="description" content="Find Your Parking Lot Now" />
+        <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon/android-chrome-512x512.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon/android-chrome-192x192.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="assets/favicon/site.webmanifest">
+        <link
+            rel="shortcut icon"
+            href="./assets/logo/logo2.png"
+            type="image/x-icon"
+        />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:title" content="Find Your Parking Lot Now" />
+        <meta property="og:description" content="Find an Empty Lot for your Car Now" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://github.com/raymond072002" />
+        <meta property="og:image" content="" />
+
+        <!-- <link rel="stylesheet" href="css/tailwind-runtime.css" /> -->
+        <link rel="stylesheet" href="css/tailwind-build.css">
+        <link rel="stylesheet" href="css/index.css" />
+        
+        <!--bootstrap-icons-->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
+            integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        
+        <!--font-awesome-icons-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-');
+        </script>
+
+        <!-- Tailwind CDN CSS  -->
+         <script src="https://cdn.tailwindcss.com"></script>
+   
+        <!-- Load Leaflet CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <!-- Load Leaflet JS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <!-- Load Papaparse for csv parsing -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+        
+        <!-- Load Three.js for the 3D Hero Section -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+        <!-- override default leaflet styles-->
+        <style>
+                /* Base styles */
+                body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+                
+                /* Map specific styles */
+                #map { height: 500px; width: 100%; border-radius: 0.75rem; }
+                .leaflet-popup-content-wrapper { border-radius: 0.5rem; }
+        </style>
+
+    </head>
+    <body
+        class="tw-flex tw-min-h-[100vh] tw-flex-col tw-bg-[#fcfcfc] 
+            tw-text-black dark:tw-bg-black  dark:tw-text-white"
+    >
+        <header
+            class="lg:tw-px-4 tw-max-w-[100vw] tw-max-w-lg:tw-mr-auto max-lg:tw-top-0 tw-fixed tw-top-4 lg:tw-left-1/2 lg:tw--translate-x-1/2 tw-z-20 tw-flex tw-h-[60px] tw-w-full 
+                    tw-text-gray-700 tw-bg-white dark:tw-text-gray-200 dark:tw-bg-[#17181b] tw-px-[3%] tw-rounded-md lg:tw-max-w-5xl tw-shadow-md dark:tw-shadow-gray-700
+                    lg:tw-justify-around lg:!tw-backdrop-blur-lg lg:tw-opacity-[0.99]"
+        >
+            <a class="tw-flex tw-p-[4px] tw-gap-2 tw-place-items-center" href="#">
+               
+
+                <div class="tw-h-[30px] tw-max-w-[100px]">
+                    <img
+                        src="assets/logo/logo2.png"
+                        alt="logo"
+                        class="tw-object-contain tw-h-full tw-w-full dark:tw-invert"
+                    />
+                </div>
+                <span class="tw-uppercase tw-text-base tw-font-medium">CARPARK LOCATOR</span>
+            </a>
+            <div
+                class="collapsible-header animated-collapse max-lg:tw-shadow-md"
+                id="collapsed-header-items"
+            >
+                <nav
+                    class="tw-relative tw-flex tw-h-full max-lg:tw-h-max tw-w-max tw-gap-5 tw-text-base max-lg:tw-mt-[30px] max-lg:tw-flex-col 
+                                max-lg:tw-gap-5 lg:tw-mx-auto tw-place-items-center"
+                >  
+                    <a class="header-links" href="#explore-section"> Explore </a>
+                   
+                    <div class="tw-relative tw-flex tw-flex-col tw-place-items-center">
+                        <div id="nav-dropdown-toggle-0" class="max-lg:tw-max-w-fit tw-flex header-links tw-gap-1  tw-place-items-center">
+                            <span class=""> Amenities </span>
+                            <i class="tw-text-sm bi bi-chevron-down"></i>
+                        </div>
+                        <nav id="nav-dropdown-list-0" 
+                            data-open="false"
+                            class="tw-scale-0 tw-opacity-0  lg:tw-fixed tw-flex lg:tw-top-[80px] lg:tw-left-1/2 lg:tw--translate-x-1/2 
+                                    tw-w-[90%] tw-rounded-lg max-lg:tw-h-0 max-lg:tw-w-0
+                                    lg:tw-h-[450px] tw-overflow-hidden
+                                     tw-bg-white dark:tw-bg-[#17181B] tw-duration-300 
+                                     tw-transition-opacity tw-transition-height tw-shadow-lg tw-p-4">
+                            <div class="tw-grid max-xl:tw-flex max-xl:tw-flex-col tw-justify-around tw-grid-cols-2 tw-w-full">
+                                <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="http://maps.google.com/?q=nearby+petrol+stations" target="_blank">
+                                    <div class="tw-font-semibold tw-text-3xl">
+                                        <i class="bi bi-fuel-pump"></i>
+                                    </div>
+                                    <div class="tw-flex tw-flex-col tw-gap-2">
+                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Nearby Petrol Stations </div>
+                                        <p>Top Up Your Gas</p>
+                                    </div> 
+                                </a>
+
+                                <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="http://maps.google.com/?q=nearby+convenience+stores" target="_blank">
+                                    <div class="tw-font-semibold tw-text-3xl">
+                                        <i class="bi bi-shop" ></i>
+                                    </div>
+                                    <div class="tw-flex tw-flex-col tw-gap-2">
+                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Nearby Convenience Store </div>
+                                        <p class="">Shop your essential stuff</p>
+                                    </div> 
+                                </a>
+
+                                <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="http://maps.google.com/?q=nearby+wc" target="_blank">
+                                    <div class="tw-font-semibold tw-text-3xl">
+                                        <i class="fa-solid fa-restroom"></i>        
+                                    </div>
+                                    <div class="tw-flex tw-flex-col tw-gap-2">
+                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Nearby Washroom </div>
+                                        <p class="">Search for Toilets in realtime</p>
+                                    </div> 
+                                </a>
+
+                                <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="http://maps.google.com/?q=nearby+singapore+pools" target="_blank">
+                                    <div class="tw-font-semibold tw-text-3xl">
+                                        <i class="fa-solid fa-4"></i>
+                                        <i class="fa-solid fa-d"></i>
+                                    </div>
+                                    <div class="tw-flex tw-flex-col tw-gap-2">
+                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Nearby Singapore Pools Outlet</div>
+                                        
+                                        <p class="">Search for Your Next 💲Windfall💲</p>
+                                    </div> 
+                                </a>
+
+                                <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="http://maps.google.com/?q=nearby+atms" target="_blank">
+                                    <div class="tw-font-semibold tw-text-3xl">
+                                        <i class="bi bi-credit-card"></i>
+                                    </div>
+                                    <div class="tw-flex tw-flex-col tw-gap-2">
+                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">
+                                            Nearby ATM
+                                        </div>
+                                        <p class="">Get Your Cash Fast</p>
+                                    </div> 
+                                </a>
+
+                                <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="http://maps.google.com/?q=nearby+supermarkets" target="_blank">
+                                    <div class="tw-font-semibold tw-text-3xl">
+                                        <i class="bi bi-cart4"></i>
+                                    </div>
+                                    <div class="tw-flex tw-flex-col tw-gap-2">
+                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">
+                                            Nearby SuperMarkets
+                                        </div>
+                                        <p class="">Buy Your Groceries</p>
+                                    </div> 
+                                </a>
+                            </div>           
+                        </nav>
+                    </div>
+                    <a class="header-links" href="#CarCare"> Car Stuff </a>
+                    
+                </nav>
+                <div
+                    class="lg:tw-mx-4 tw-flex tw-place-items-center tw-gap-[20px] tw-text-base max-md:tw-w-full 
+                            max-md:tw-flex-col max-md:tw-place-content-center"
+                >
+                    <button type="button" onclick="toggleMode()" class="header-links tw-text-gray-600 dark:tw-text-gray-300" title="toggle-theme" 
+                            id="theme-toggle"> 
+                        <i class="bi bi-sun" id="toggle-mode-icon"></i>
+                    </button>
+                    
+                        <a
+                            id="locate-button-1"   
+                            href="#map-container"
+                            aria-label="Find a Carpark"
+                            class="btn tw-flex tw-gap-3 tw-px-3 tw-py-2 tw-transition-transform 
+                                        tw-duration-[0.3s] hover:tw-translate-x-2"
+                        >
+                            <span>Find A CarPark Now</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    
+                </div>
+            </div>
+            <button
+                class="bi bi-list tw-absolute tw-right-3 tw-top-3 tw-z-50 tw-text-3xl tw-text-gray-500 lg:tw-hidden"
+                onclick="toggleHeader()"
+                aria-label="menu"
+                id="collapse-btn"
+            ></button>
+        </header>
+        
+        <!--Hero Section-->
+        <section
+            class="hero-section tw-relative tw-mt-20 tw-flex tw-min-h-[100vh] tw-w-full tw-max-w-[100vw] tw-flex-col tw-overflow-hidden max-lg:tw-mt-[100px]"
+            id="hero-section"
+            
+        >
+                 
+          
+            <div    
+                class="hero-bg-gradient tw-relative tw-flex tw-h-full tw-min-h-[100vh] tw-w-full tw-flex-col tw-place-content-center tw-gap-6 tw-p-[5%] max-xl:tw-place-items-center max-lg:tw-p-4"
+                
+            >
+                <div class=" tw-absolute tw-inset-0 tw-z-0 tw-min-h-[30vh] tw-min-w-[80vw]"
+                id="three-canvas"></div>
+                <div class="purple-bg-grad tw-absolute tw-left-1/2 tw--translate-1/2 tw-top-[10%] tw-h-[120px] tw-w-[120px]"
+                ></div> 
+                
+                <div
+                    class="tw-flex tw-flex-col tw-min-h-[40vh] tw-place-content-center tw-items-center"
+                    
+                >
+                    <h2
+                        class="reveal-up tw-text-center tw-text-7xl tw-font-semibold tw-uppercase tw-leading-[90px] max-lg:tw-text-4xl max-md:tw-leading-snug"
+                    >
+                        <span class=""> CARPARK LOCATOR </span>
+                        <br />
+                        <span class="tw-font-thin tw-font-serif"> FIND A SPOT NOW </span>
+                    </h2>
+                    <div
+                        class="reveal-up tw-mt-8 tw-max-w-[450px] tw-text-lg max-lg:tw-text-base tw-p-2 tw-text-center
+                         tw-text-gray-800 dark:tw-text-white max-lg:tw-max-w-full"
+                    >
+                        
+                        CLICK ON GET STARTED TO FIND AN EMPTY LOT NOW
+                    </div>
+
+                    <div
+                        class="reveal-up tw-mt-10 max-md:tw-flex-col tw-flex tw-place-items-center tw-gap-4"
+                        
+                    >
+                    <div id="locate-button">
+                        <a
+                            class="btn tw-group max-lg:!tw-w-[160px] tw-flex tw-gap-2 tw-shadow-lg !tw-w-[170px] !tw-rounded-xl !tw-py-4 max-lg:!tw-py-2 tw-transition-transform tw-duration-[0.3s] hover:tw-scale-x-[1.03]"
+                            href="#map-container"
+                            
+                        >
+                            <span>Get started</span>
+                            <i class="bi bi-arrow-right group-hover:tw-translate-x-1 tw-duration-300"></i>
+                        </a>
+                    </div>
+                        
+                    </div>
+                </div>
+                
+                <!-- prompt container -->
+                <div
+                    class="  tw-relative tw-mt-8 tw-flex tw-w-full tw-place-content-center tw-place-items-center"
+                    id="dashboard-container"
+                >
+                    <div class="purple-bg-grad tw-absolute tw-left-1/2 tw--translate-x-1/2 tw-top-[5%] tw-h-[200px] tw-w-[200px]"
+                    ></div>    
+
+                    <div
+                        class="tw-relative tw-bg-white dark:tw-bg-black tw-border-[1px] dark:tw-border-[#36393c] lg:tw-w-[1024px]
+                                lg:tw-h-[450px]  tw-flex tw-shadow-xl max-lg:tw-h-[450px] max-lg:tw-w-full
+                                tw-overflow-hidden
+                                tw-min-w-[320px] md:tw-w-full tw-min-h-[450px] tw-rounded-xl tw-bg-transparent max-md:tw-max-w-full"
+                        id="dashboard"
+                    >  
+
+                        <div class="purple-bg-grad tw-max-w-[80%] tw-absolute tw-left-1/2 tw--translate-x-1/2 tw-top-[0%] lg:tw-max-w-[1000px] tw-h-full tw-w-full"
+                        ></div> 
+                        <div class="animated-border tw-w-full tw-h-full tw-p-[2px]">
+                            <div class="tw-w-full tw-h-full tw-rounded-xl tw-overflow-hidden tw-flex">
+                                
+
+                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="pixa-playground">
+                                    <div class="tw-relative tw-w-full tw-flex tw-place-content-center tw-h-full">
+                                        <div class="tw-absolute tw-top-[20%] max-lg:tw-top-[30%] tw-left-1/2 tw--translate-x-1/2  tw-w-[150px] tw-h-[150px]">
+                                            <img src="./assets/logo/logo2.png" class="tw-w-full tw-h-full dark:tw-invert tw-object-contain tw-opacity-20"
+                                                alt="CP logo">
+                                        </div>
+                                        <div class="prompt-container tw-overflow-y-auto tw-px-[5%] max-lg:tw-px-2 scrollbar max-lg:tw-max-h-[80%] tw-max-h-[550px] 
+                                                    max-lg:tw-mt-12 tw-w-full tw-h-full tw-z-10 tw-flex tw-flex-col" id="prompt-container">
+                                            <div class="tw-w-full tw-flex tw-text-center tw-flex-col tw-place-content-center">
+                                                <h2 class="tw-text-4xl max-md:tw-text-2xl max-md:tw-mt-3 tw-opacity-80">
+                                                    Locate Your Next Car Park Lot
+                                                </h2>
+                                                <div class="tw-inline tw-mt-6 max-md:tw-mt-3">
+                                                    <span id="prompts-sample" ></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                     <div class="tw-mt-auto tw-w-full tw-flex tw-px-6 tw-place-content-center">
+                                        <a href="#map-container" id="prompt-form" class="btn !tw-w-full !tw-bg-transparent tw-duration-[0.3s] 
+                                                                hover:!tw-bg-black hover:!tw-text-white
+                                                                dark:hover:!tw-bg-white dark:hover:!tw-text-black
+                                                                !tw-border-[1px] !tw-border-black !tw-text-black
+                                                                dark:!tw-border-white dark:!tw-text-white
+                                                                ">
+                                            Locate Now
+                                        </a>
+                                    </div>
+                                    <form action="" id="prompt-form1" onsubmit="return false;" 
+                                        class="tw-hidden tw-place-content-center tw-mt-auto tw-h-[50px] tw-p-1 tw-place-items-center 
+                                                tw-justify-around tw-flex tw-gap-1 tw-bottom-2 tw-w-full tw-rounded-md tw-bg-[#f3f4f6] dark:tw-bg-[#171717]">
+                                        <div class="tw-min-w-[140px] tw-min-h-[80px] max-lg:tw-absolute tw-z-10 tw-top-1 tw-left-1/2 max-lg:tw--translate-x-1/2 
+                                                    tw-flex tw-flex-col tw-text-sm tw-gap-1 tw-place-content-center">
+                                            
+                                        </div>
+                                        
+                                      
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!--Map Section-->
+        <section
+            class=" tw-mt-5 tw-flex tw-w-full tw-flex-col tw-gap-6 tw-place-items-center tw-p-[2%]"
+            id="map-container"
+        >
+            <h3
+                class="reveal-up tw-text-5xl tw-font-medium max-md:tw-text-2xl"
+            >
+                Map Locations
+            </h3>
+            <div id="status-message" class="tw-relative tw-w-full tw-flex tw-place-content-center tw-h-full"></div>
+            <div
+                class="tw-mt-10 tw-flex tw-w-full lg:tw-max-h-[600px] lg:tw-h-[600px] tw-h-auto tw-gap-8 lg:tw-flex-row max-lg:tw-flex-col max-w-[1200px]"
+            >
+                
+                <div
+                    class="tw-w-full lg:tw-w-8/12 tw-bg-gray-200 dark:tw-bg-[#222] tw-rounded-lg tw-shadow-xl tw-p-2 
+                        max-lg:tw-h-[400px] tw-min-h-[300px]"
+                    id="map-container-results"
+                >
+                    <h4 class="tw-text-xl tw-mb-2 tw-font-semibold tw-text-gray-800 dark:tw-text-gray-200">
+                        Analysis Map
+                    </h4>
+                    
+                    <div
+                        id="map"
+                        class="tw-w-full tw-h-[500px] tw-bg-slate-300 dark:tw-bg-gray-700 tw-rounded"
+
+                    >
+                        
+                    </div>
+                </div>
+              
+                    <div 
+                        class="lg:tw-w-4/12 tw-bg-white dark:tw-bg-[#080808] tw-rounded-lg tw-shadow-xl tw-p-4 
+                            tw-flex-shrink-0 tw-overflow-y-auto scrollbar tw-hidden
+                            tw-h-full max-h-[400px] lg:max-h-[600px]" 
+                        id= "list-container"
+                    >
+                        <h4 class="tw-text-xl tw-mb-4 tw-font-semibold tw-text-gray-800 dark:tw-text-gray-200">
+                            5 Nearest Locations
+                        </h4>
+                        <div id="carpark-list" class="space-y-3"></div>
+                    </div>
+              
+            </div>
+        </section>
+        <!--Explore Section-->
+        <section
+            class="tw-mt-5 tw-flex tw-w-full tw-flex-col tw-gap-6 tw-place-items-center tw-p-[2%]"
+            id="explore-section"
+        >
+            <h3
+                class="reveal-up tw-text-5xl tw-font-medium max-md:tw-text-2xl"
+            >
+                Explore All Locations
+            </h3>
+
+            <div class="tw-w-full max-w-[800px] tw-mt-8 tw-mb-4 ">
+                <label for="carpark-search" class="tw-sr-only">Search Car Parks</label>
+                <div class="tw-relative">
+                    <div class="tw-absolute tw-inset-y-0 tw-left-0 tw-pl-3 tw-flex tw-items-center tw-pointer-events-none">
+                        <svg class="tw-h-5 tw-w-5 tw-text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input
+                        type="text"
+                        id="carpark-search"
+                        placeholder="Search by Carpark Number or Address..."
+                        class="tw-block tw-w-full tw-py-3 tw-pl-10 tw-pr-4 tw-border tw-border-gray-300 tw-rounded-lg tw-shadow-sm 
+                            focus:tw-ring-red-500 focus:tw-border-red-500 tw-text-base dark:tw-bg-[#171717] dark:tw-border-[#2d2d2d] dark:tw-text-white"
+                    >
+                </div>
+            </div>
+            
+            <div class="tw-w-full max-w-[1200px] tw-overflow-x-auto tw-shadow-xl tw-rounded-lg">
+                <table class="tw-min-w-full tw-divide-y tw-divide-gray-200 dark:tw-divide-gray-700">
+                <thead class="tw-bg-gray-50 dark:tw-bg-gray-800 tw-sticky tw-top-0">
+                        <tr>
+                            <th class="tw-px-6 tw-py-3 tw-text-center tw-text-xs tw-font-medium tw-text-gray-500 dark:tw-text-gray-400 tw-uppercase tw-tracking-wider">
+                                Carpark No.
+                            </th>
+                            <th class="tw-px-6 tw-py-3 tw-text-center tw-text-xs tw-font-medium tw-text-gray-500 dark:tw-text-gray-400 tw-uppercase tw-tracking-wider">
+                                Address
+                            </th>
+                            <th class="tw-px-6 tw-py-3 tw-text-center tw-text-xs tw-font-medium tw-text-gray-500 dark:tw-text-gray-400 tw-uppercase tw-tracking-wider">
+                                Available Lots
+                            </th>
+                            <th class="tw-px-6 tw-py-3 tw-text-center tw-text-xs tw-font-medium tw-text-gray-500 dark:tw-text-gray-400 tw-uppercase tw-tracking-wider">
+                                Action
+                            </th>
+                        </tr>
+                        </thead>
+                    <tbody id="carpark-table-body" class="tw-bg-white dark:tw-bg-[#080808] tw-divide-y tw-divide-gray-200 dark:tw-divide-gray-700">
+                        </tbody>
+                </table>
+            </div>
+            <div 
+                id="pagination-controls" 
+                class="tw-w-full max-w-[1200px] tw-flex tw-justify-center tw-mt-4 tw-p-2 tw-bg-white dark:tw-bg-[#080808] tw-rounded-lg tw-shadow"
+            >
+            </div>
+        </section>
+        <!--Car Care-->
+        <section
+            class="tw-mt-5 tw-flex tw-min-h-[80vh] tw-w-full tw-flex-col tw-place-content-center tw-place-items-center tw-p-[2%] max-lg:tw-p-3"
+            id="CarCare"
+        >
+            <h3
+                class="reveal-up tw-text-4xl tw-font-medium max-md:tw-text-2xl"
+            >
+                Shop for Stuff for You Ride✨
+            </h3>
+            <!-- articles -->
+        
+            <div
+                class="reveal-up tw-mt-10 tw-flex tw-flex-wrap tw-place-content-center tw-gap-10 max-lg:tw-flex-col"
+            >
+                <a
+                    href="https://www.lazada.sg/air-fresheners/?spm=a2o42.10453684.0.0.72646f29skZrxa&drvn&from=wangpu&sc=KVUG&q=All-Products"
+                    class="tw-flex tw-h-[500px] tw-w-[400px] tw-flex-col tw-gap-2 tw-overflow-clip tw-rounded-lg tw-p-4 max-lg:tw-w-[350px]"
+                >
+                    <div
+                        class="tw-h-[350px] tw-min-h-[350px] tw-w-full tw-overflow-hidden tw-rounded-2xl"
+                    >
+                        <img
+                            src="./assets/images/aircare.jpg"
+                            alt="article image"
+                            class="tw-h-full tw-w-full tw-object-cover tw-transition-transform tw-duration-700 hover:tw-scale-[1.3]"
+                            srcset=""
+                        />
+                    </div>
+
+                    <div class="tw-text-gray-600 dark:tw-text-gray-300 tw-justify-between tw-flex tw-gap-2">
+                        <div class="tw-text-gray-800 dark:tw-text-gray-200">
+                            Air Fragrances
+                        </div>
+                        <div class="tw-text-gray-600 dark:tw-text-gray-400">
+                            Nov, 17, 2025
+                        </div>
+                    </div>
+                    <h3
+                        class="tw-mt-1 tw-font-medium tw-text-xl max-md:tw-text-xl"
+                    >
+                        Fragrances for Your Car
+                    </h3>
+                    
+                </a>
+                
+                <a
+                    href="https://shopee.sg/driven.sg?shopCollection=112976244#product_list"
+                    class="tw-flex tw-h-[500px] tw-w-[400px] tw-flex-col tw-gap-2 tw-overflow-clip tw-rounded-lg tw-p-4 max-lg:tw-w-[350px]"
+                >
+                    <div
+                        class="tw-h-[350px] tw-min-h-[350px] tw-w-full tw-overflow-hidden tw-rounded-2xl"
+                    >
+                        <img
+                            src="./assets/images/carcare.jpg"
+                            alt="article image"
+                            class="tw-h-full tw-w-full tw-object-cover tw-transition-transform tw-duration-700 hover:tw-scale-[1.3]"
+                            srcset=""
+                        />
+                    </div>
+
+                    <div class="tw-text-gray-600 dark:tw-text-gray-300 tw-justify-between tw-flex tw-gap-2">
+                        <div class="tw-text-gray-800 dark:tw-text-gray-200">
+                            Car Cleaning 101
+                        </div>
+                        <div class="tw-text-gray-600 dark:tw-text-gray-400">
+                            Nov, 22, 2025
+                        </div>
+                    </div>
+                    <h3
+                        class="tw-mt-1 tw-font-medium tw-text-xl max-md:tw-text-xl"
+                    >
+                        Stuff to Clean Your Car
+                    </h3>
+                    
+                </a>
+
+                <a
+                    href="https://www.lazada.sg/oils-fluids/?spm=a2o42.10453684.0.0.1e456f29lrFYYg&drvn&from=wangpu&sc=KVUG&q=All-Products"
+                    class="tw-flex tw-h-[500px] tw-w-[400px] tw-flex-col tw-gap-2 tw-overflow-clip tw-rounded-lg tw-p-4 max-lg:tw-w-[350px]"
+                >
+                    <div
+                        class="tw-h-[350px] tw-min-h-[350px] tw-w-full tw-overflow-hidden tw-rounded-2xl"
+                    >
+                        <img
+                            src="./assets/images/engine.png"
+                            alt="article image"
+                            class="tw-h-full tw-w-full tw-object-cover tw-transition-transform tw-duration-700 hover:tw-scale-[1.3]"
+                            srcset=""
+                        />
+                    </div>
+
+                    <div class="tw-text-gray-600 dark:tw-text-gray-300 tw-justify-between tw-flex tw-gap-2">
+                        <div class="tw-text-gray-800 dark:tw-text-gray-200">
+                            Engine Lubrication
+                        </div>
+                        <div class="tw-text-gray-600 dark:tw-text-gray-400">
+                            Nov, 27, 2025
+                        </div>
+                    </div>
+                    <h3
+                        class="tw-mt-1 tw-font-medium tw-text-xl max-md:tw-text-xl"
+                    >
+                        All the Oils
+                    </h3>
+                    
+                </a>
+
+            </div>
+        </section>
+        <!--PDPA-->
+        <section
+            id="privacy-policy"
+            class="tw-mt-5 tw-flex tw-hidden tw-w-8 tw-text-center tw-place-content-center tw-place-items-center tw-p-[2%] max-lg:tw-p-3"
+        >
+            <div class="tw-max-w-4xl tw-mx-auto tw-w-full max-w-[800px] tw-py-10">
+            
+                <h3
+                class="reveal-up tw-text-5xl tw-font-medium max-md:tw-text-2xl"
+                >
+                Privacy Policy (Personal Data Protection Act 2012)
+                </h3>
+            
+            
+                <p class="tw-text-sm tw-text-gray-600 dark:tw-text-gray-400 tw-mb-8">
+                    <strong>Effective Date:</strong> Nov 2025
+                </p>
+                <p class="tw-text-lg tw-text-gray-800 dark:tw-text-gray-300 tw-mb-10">
+                    <strong>Peh Kok Meng</strong> ("we," "us," or "our") operates www.driven.sg. This policy describes how we manage Personal Data in accordance with the Singapore Personal Data Protection Act 2012 ("PDPA").
+                </p>
+
+                <div class="tw-mb-10">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white tw-mb-4">1. Personal Data and Collection</h2>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        "Personal Data" refers to data, whether true or not, about an individual who can be identified from that data or from that data and other information to which we have access.
+                    </p>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        We may collect Personal Data when you: <span class="tw-text-sm tw-text-gray-500 dark:tw-text-gray-500">Contact Us: enquires@driven.sg </span>
+                    </p>
+                    
+                    <h3 class="tw-text-xl tw-font-medium tw-text-gray-800 dark:tw-text-gray-300 tw-mt-6 tw-mb-3">1.1 Types of Personal Data Collected:</h3>
+                    <ul class="tw-list-disc tw-list-inside tw-space-y-2 tw-pl-6 tw-text-gray-700 dark:tw-text-gray-400">
+                        <li>[Name, NRIC/FIN (if applicable and legally required)]</li>
+                        <li>[Email Address, Contact Number]</li>
+                        <li>[Billing Address and Payment Information (via secure third-party processors)]</li>
+                        <li>[IP addresses, device information, and site usage data (Log Data)]</li>
+                    </ul>
+                </div>
+
+                <div class="tw-mb-10">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white tw-mb-4">2. Purpose of Collection and Use (PDPA Purpose Obligation)</h2>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        We collect and use your Personal Data for the following purposes:
+                    </p>
+                    <ul class="tw-list-disc tw-list-inside tw-space-y-2 tw-pl-6 tw-text-gray-700 dark:tw-text-gray-400">
+                        <li>To provide, operate, and maintain [Your Service/Platform].</li>
+                        <li>To process transactions and manage your account.</li>
+                        <li>To communicate with you regarding updates, service notices, or marketing materials (where explicit consent is given).</li>
+                        <li>To improve our website functionality and user experience.</li>
+                        <li>To comply with applicable laws and regulations (e.g., accounting, tax).</li>
+                    </ul>
+                </div>
+                
+                <div class="tw-mb-10">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white tw-mb-4">3. Consent and Withdrawal (PDPA Consent Obligation)</h2>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        By submitting your Personal Data to us, you are deemed to have consented to the collection, use, and disclosure of your Personal Data for the purposes set out in this policy.
+                    </p>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        You may withdraw your consent for us to collect, use, and/or disclose your Personal Data by submitting a written request to our Data Protection Officer (DPO) (contact details below). Upon receiving written notice, we will inform you of the likely consequences of withdrawing consent. We will stop collecting, using, or disclosing the Personal Data within <span class="tw-font-medium">[a reasonable timeframe, e.g., 30 days]</span> unless legally required otherwise.
+                    </p>
+                </div>
+                
+                <div class="tw-pt-8 tw-border-t tw-border-gray-200 dark:tw-border-gray-700">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white tw-mb-4">7. Data Protection Officer (DPO)</h2>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        If you have any questions or feedback regarding this Privacy Policy, please contact our Data Protection Officer:
+                    </p>
+                    <div class="tw-space-y-1 tw-text-gray-700 dark:tw-text-gray-300">
+                        <p><strong>Attention:</strong> Peh Kok Meng</p>
+                        <p><strong>Email:</strong> <a href="mailto:support@driven.sg" class="tw-text-indigo-600 dark:tw-text-indigo-400 hover:tw-underline">dpo@yourcompany.com</a></p>
+                        <p><strong>Mailing Address:</strong> 42 Kallang Place, Singapore</p>
+                    </div>
+                    <p class="tw-mt-6 tw-text-xs tw-text-gray-500 dark:tw-text-gray-500">
+                        This Privacy Policy is governed by the laws of Singapore.
+                    </p>
+                </div>
+
+                <div class="tw-mt-10 tw-w-full tw-flex tw-px-6 tw-place-content-center">
+                    <a href="#" id="privacy-policy-hide" class="btn !tw-w-full !tw-bg-transparent tw-duration-[0.3s] 
+                                            hover:!tw-bg-black hover:!tw-text-white
+                                            dark:hover:!tw-bg-white dark:hover:!tw-text-black
+                                            !tw-border-[1px] !tw-border-black !tw-text-black
+                                            dark:!tw-border-white dark:!tw-text-white
+                                            ">
+                        Acknowledge and Continue
+                    </a>
+                </div>
+                                    
+            </div>
+        </section>
+        <!--Terms of Service-->
+        <section
+            id="terms-of-service"
+            class="tw-hidden tw-mt-5 tw-flex tw-w-full tw-flex-col tw-place-content-center tw-place-items-center tw-p-[2%] max-lg:tw-p-3"
+        >
+            <div class="tw-max-w-4xl tw-mx-auto tw-w-full tw-py-10">
+                
+                <h1
+                    class="tw-text-center tw-text-4xl tw-font-medium tw-text-gray-900 dark:tw-text-white tw-mb-4 max-md:tw-text-2xl"
+                >
+                    Terms of Service
+                </h1>
+                
+                <p class="tw-mt-8 tw-text-sm tw-text-gray-600 dark:tw-text-gray-400 tw-mb-8">
+                    <strong>Last Updated:</strong> Nov 2025
+                </p>
+                <p class="tw-text-lg tw-text-gray-800 dark:tw-text-gray-300 tw-mb-10">
+                    Welcome to **driven.sg**. These Terms and Conditions govern your use of our website and services. By accessing or using the Service, you agree to be bound by these Terms.
+                </p>
+
+                <div class="tw-mb-10">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white tw-mb-4">1. User Accounts and Membership</h2>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        If you create an account with us, you must provide accurate and complete information. You are solely responsible for the activity that occurs on your account and must keep your password secure.
+                    </p>
+                    <h3 class="tw-text-xl tw-font-medium tw-text-gray-800 dark:tw-text-gray-300 tw-mt-6 tw-mb-3">1.1 Termination</h3>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
+                    </p>
+                </div>
+
+                <div class="tw-mb-10">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white tw-mb-4">2. Intellectual Property Rights</h2>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        The Service and its original content (excluding content provided by users) are and will remain the exclusive property of **Peh Kok Meng** and its licensors, protected by copyright, trademark, and other laws of Singapore.
+                    </p>
+                </div>
+                
+                <div class="tw-mb-10">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white tw-mb-4">3. Links to Other Websites</h2>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        Our Service contains links to third-party web sites or services, such as Lazada and Shopee, that are not owned or controlled by **Peh Kok Meng**. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third-party sites. Your dealings with these third parties are solely between you and the third party.
+                    </p>
+                </div>
+
+                <div class="tw-pt-8 tw-border-t tw-border-gray-200 dark:tw-border-gray-700">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white tw-mb-4">6. Governing Law and Contact</h2>
+                    <p class="tw-mb-4 tw-text-gray-700 dark:tw-text-gray-400">
+                        These Terms shall be governed and construed in accordance with the **laws of Singapore**, without regard to its conflict of law provisions. Any legal action will be resolved in the courts of Singapore.
+                    </p>
+                    <p class="tw-mt-6 tw-text-xs tw-text-gray-500 dark:tw-text-gray-500">
+                        For questions regarding these Terms, please contact us at **support@driven.sg**.
+                    </p>
+                </div>
+
+                <div class="tw-mt-10 tw-w-full tw-flex tw-px-6 tw-place-content-center">
+                    <a href="#" id="terms-of-service-hide" class="btn !tw-w-full !tw-bg-transparent tw-duration-[0.3s] 
+                                                                hover:!tw-bg-black hover:!tw-text-white
+                                                                dark:hover:!tw-bg-white dark:hover:!tw-text-black
+                                                                !tw-border-[1px] !tw-border-black !tw-text-black
+                                                                dark:!tw-border-white dark:!tw-text-white
+                                                                ">
+                        Acknowledge and Continue
+                    </a>
+                </div>
+                
+            </div>
+        </section>
+        <footer
+            class="tw-mt-auto tw-flex tw-flex-col tw-w-full tw-gap-4 tw-text-sm tw-pt-[5%] tw-pb-10 tw-px-[10%] 
+                    tw-text-black dark:tw-text-white max-md:tw-flex-col"
+        >
+            <div class="tw-flex max-md:tw-flex-col max-md:tw-gap-6 tw-gap-3 tw-w-full tw-place-content-around">
+                <div
+                    class="tw-flex tw-h-full tw-w-[250px] tw-flex-col tw-place-items-center tw-gap-6 max-md:tw-w-full"
+                >   
+                    <a href="#" class="tw-w-full tw-place-items-center tw-flex tw-flex-col tw-gap-6">
+                        <img
+                            src="./assets/logo/logo2.png"
+                            alt="logo"
+                            srcset=""
+                            class="tw-max-w-[120px] dark:tw-invert"
+                        />
+                        <div class="tw-max-w-[120px] tw-text-center tw-text-3xl tw-h-fit">
+                            CARPARK LOCATOR
+                        </div>
+                    </a>
+                    <!-- <div class="tw-mt-3 tw-text-lg tw-font-semibold">Follow us</div> -->
+                    <div class="tw-flex tw-gap-4 tw-text-lg">
+                        <a
+                            href="https://github.com/raymond072002/Real_time_Carpark_finder"
+                            aria-label="Github"
+                        >
+                            <i class="bi bi-github"></i>
+                        </a>
+                        
+                        <a
+                            href="https://www.linkedin.com/"
+                            aria-label="Linkedin"
+                        >
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="tw-flex max-md:tw-flex-col tw-flex-wrap tw-gap-6 tw-h-full tw-w-full tw-justify-around">
+                    <div class="tw-flex tw-h-full tw-w-[200px] tw-flex-col tw-gap-4">
+                        <h2 class="tw-text-xl">Resources</h2>
+                        <div class="tw-flex tw-flex-col tw-gap-3">
+                            <a href="https://github.com/raymond072002/Real_time_Carpark_finder" class="footer-link">Getting started</a>
+                            <a href="https://data.gov.sg/datasets/d_23f946fa557947f93a8043bbef41dd09/view" class="footer-link">HDB CarPark information</a>
+                            <a href="https://data.gov.sg/datasets/d_ca933a644e55d34fe21f28b8052fac63/view" class="footer-link">HDB CarPark Availability</a>
+                            <a href="https://www.papaparse.com/" class="footer-link">PapaParse</a>
+                            
+                        </div>
+                    </div>
+
+
+                    <div class="tw-flex tw-h-full tw-w-[200px] tw-flex-col tw-gap-4">
+                        <h2 class="tw-text-xl">Resources</h2>
+                        <div class="tw-flex tw-flex-col tw-gap-3">
+                            <a href="https://threejs.org/" class="footer-link">3js</a>
+                            <a href="https://github.com/cgcai/SVY21" class="footer-link">SVY21</a>
+                            <a href="https://awesome-landingpages.vercel.app/" class="footer-link">Site Inspiration</a>
+                            <a href="https://github.com/raymond072002" class="footer-link">Github</a>
+                        </div>
+                    </div>
+
+                    <div class="tw-flex tw-h-full tw-w-[200px] tw-flex-col tw-gap-4">
+                        <h2 class="tw-text-xl">Legal</h2>
+                        <div class="tw-flex tw-flex-col tw-gap-3">
+                            <a id="terms-of-service-link" href="#terms-of-service" class="footer-link">Terms of service</a>
+                            <a id ="privacy-link" href="#privacy-policy" class="footer-link">Privacy Policy</a>
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="tw-mt-8">
+            <div class="tw-mt-2 tw-flex tw-gap-2 tw-flex-col tw-text-gray-700 dark:tw-text-gray-300 tw-place-items-center 
+                    tw-text-[12px] tw-w-full tw-text-center tw-place-content-around">
+                <span>Copyright &#169; 2025</span>
+                <span>All trademarks and copyrights belong to their respective owners.</span>
+            </div>
+
+        </footer>
+    <!--typed-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.10/typed.min.js" integrity="sha512-hIlMpy2enepx9maXZF1gn0hsvPLerXoLHdb095CmRY5HG3bZfN7XPBZ14g+TUDH1aGgfLyPHmY9/zuU53smuMw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <!--ScrollTrigger-->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/ScrollTrigger.min.js"
+        integrity="sha512-AY2+JxnBETJ0wcXnLPCcZJIJx0eimyhz3OJ55k2Jx4RtYC+XdIi2VtJQ+tP3BaTst4otlGG1TtPJ9fKrAUnRdQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    ></script>
+
+    <!--GSAP-->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/gsap.min.js"
+        integrity="sha512-B1lby8cGcAUU3GR+Fd809/ZxgHbfwJMp0jLTVfHiArTuUt++VqSlJpaJvhNtRf3NERaxDNmmxkdx2o+aHd4bvw=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    ></script>
+    <!--Components-->
+    <script src="./scripts/components.js"></script>
+    <script src="scripts/svy21.js" ></script>
+    <script src="scripts/index.js" ></script>
+    <script src="scripts/functions.js"></script>
+    <script defer src="scripts/main.js"></script>
+    </body>
+    
 </html>
