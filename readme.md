@@ -56,3 +56,6 @@ Since this is primarily a front-end application, setup is straightforward.
 ### Credits
 * **Developer:** [raymond072002](https://github.com/raymond072002) (Inferred from the Open Graph URL in `index.html`)
 * **External Content/Shop Links:** Lazada and Shopee
+* "Parking lot" (https://skfb.ly/prnSQ) by Veterock is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "Auzrea Parking Final" (https://skfb.ly/6zTxO) by MML0385 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "Generic passenger car pack" (https://skfb.ly/6sUFy) by Comrade1280 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
