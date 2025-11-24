@@ -1,4 +1,5 @@
-# CARPARK LOCATOR 🚗
+# CARPARK LOCATOR 🚗<img width="170" height="214" alt="image" src="https://github.com/user-attachments/assets/80b7575e-e9fd-423c-b58c-fdc96915c063" />
+
 
 **Find Your Parking Lot**
 
@@ -15,9 +16,10 @@
     * [2.5 Car Care Section](#25-car-care-section)
     * [2.6 Theme Toggle](#26-theme-toggle)
     * [2.7 3D Hero Section](#27-3d-hero-section)
-* [3. Technologies Used](#3-technologies-used)
-* [4. Installation and Setup](#4-installation-and-setup)
-* [5. Credits](#5-credits)
+* [3. Data Sources](#3-data-sources)
+* [4. Technologies Used](#4-technologies-used)
+* [5. Installation and Setup](#5-installation-and-setup)
+* [6. Credits](#6-credits)
 
 ---
 
@@ -59,7 +61,18 @@ A visually engaging hero section potentially utilizing **3D graphics** (powered 
 
 ---
 
-## 3. Technologies Used
+## 3. Data Sources 💾
+
+This project relies on publicly available real-time data provided by the Singapore government via the Data.gov.sg APIs:
+
+* **Carpark Availability (Real-time):** Provides the current number of available lots for HDB and LTA car parks.
+    * [Source Link](https://data.gov.sg/datasets/d_ca933a644e55d34fe21f28b8052fac63/view)
+* **HDB Carpark Information (Location Data):** Used to map the static location and type of each car park.
+    * [Source Link](https://data.gov.sg/datasets/d_17f5382f26140b1fdae0ba2ef6239d2f/view)
+
+---
+
+## 4. Technologies Used
 
 This project is built using modern web technologies:
 
@@ -71,7 +84,7 @@ This project is built using modern web technologies:
 
 ---
 
-## 4. Installation and Setup
+## 5. Installation and Setup
 
 Since this is primarily a front-end application, setup is straightforward.
 
@@ -94,11 +107,12 @@ Since this is primarily a front-end application, setup is straightforward.
 
 ---
 
-## 5. Credits
+## 6. Credits
 ### Credits
 * **Developer:** [raymond072002](https://github.com/raymond072002) (Inferred from the Open Graph URL in `index.html`)
 * **External Content/Shop Links:** Lazada and Shopee
 * "Parking lot" (https://skfb.ly/prnSQ) by Veterock is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 * "Auzrea Parking Final" (https://skfb.ly/6zTxO) by MML0385 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 * "Generic passenger car pack" (https://skfb.ly/6sUFy) by Comrade1280 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
-* "HDB" (https://skfb.ly/o6XON) by YongG is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "HDB" (https://skfb.ly/o6XON) by YongG is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).<img width="170" height="214" alt="image" src="https://github.com/user-attachments/assets/2eadb188-2906-4177-96a3-184549de9771" />
+
