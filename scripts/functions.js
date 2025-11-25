@@ -671,8 +671,8 @@ function initThree() {
 
     // 1. Load the GLTF Model for the Entry Car
     loader.load(
-      //  'assets/3d_model/parkinglot.gltf', // local size exceeded
-      'https://wms.driven.sg/dfsd/carpark/assets/3d_model/parkinglot.gltf',
+        'assets/3d_model/parkinglot.gltf', // local size exceeded
+   
         function (gltf) {
      
             model = gltf.scene;
