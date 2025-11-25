@@ -671,18 +671,12 @@ function initThree() {
 
     // 1. Load the GLTF Model for the Entry Car
     loader.load(
-      //  'assets/3d_model/parkinglot.gltf', // local size exceeded
-      'https://drivenasia.synology.me/dfsd/carpark/assets/3d_model/parkinglot.gltf',
+        'assets/3d_model/parkinglot.gltf', // local size exceeded
+      'https://wms.driven.sg/dfsd/carpark/assets/3d_model/parkinglot.gltf',
         function (gltf) {
-            // This function runs AFTER the model is loaded
+     
             model = gltf.scene;
-
-    //                               model.traverse(function (object) {
-    //               if (object.isMesh) {
-    //                   console.log('Found Mesh Name:', object.name);
-    //              }
-    //          });
-            
+       
             // Apply necessary scale and position adjustments
             model.scale.set(0.5, 0.5, 0.5); // Adjust size
             model.rotation.y = Math.PI / 2; // Rotate if needed
