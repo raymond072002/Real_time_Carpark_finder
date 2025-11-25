@@ -671,7 +671,8 @@ function initThree() {
 
     // 1. Load the GLTF Model for the Entry Car
     loader.load(
-        'assets/3d_model/parkinglot.gltf', // <-- 🚨 IMPORTANT: Replace with the actual path
+      //  'assets/3d_model/parkinglot.gltf', // local size exceeded
+      'https://drivenasia.synology.me/dfsd/carpark/assets/3d_model/parkinglot.gltf',
         function (gltf) {
             // This function runs AFTER the model is loaded
             model = gltf.scene;
